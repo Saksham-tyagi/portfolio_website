@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saksham Tyagi | Cybernetic Developer Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --neon-blue: #00f7ff;
+            --neon-purple: #b300ff;
+            --neon-teal: #00ffcc;
+            --dark-bg: #0a0a12;
+            --system-red: #ff2a6d;
+        }
+        
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--dark-bg);
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="none" stroke="%2300f7ff" stroke-width="1"/><circle cx="8" cy="8" r="1" fill="%2300f7ff"/></svg>'), auto;
+        }
+        
+        /* Cyberpunk Scanlines */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(to bottom, 
+                    rgba(255,255,255,0) 0%, 
+                    rgba(255,255,255,0.06) 50%, 
+                    rgba(255,255,255,0) 100%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+            animation: scanline 8s linear infinite;
+            opacity: 0.3;
+        }
+        
+        @keyframes scanline {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
+        }
+        
+        /* Digital Grid Background */
+        .grid-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 247, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 247, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -2;
+        }
+        
+        /* Animated Particle Background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            background-color: rgba(0, 247, 255, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        /* Holographic UI Elements */
+        .holographic-card {
+            background: rgba(15, 15, 25, 0.7);
+            border: 1px solid rgba(0, 247, 255, 0.2);
+            border-radius: 8px;
+            box-shadow: 
+                0 0 15px rgba(0, 247, 255, 0.2),
+                inset 0 0 10px rgba(0, 247, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+        
+        .holographic-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 0%,
+                rgba(0, 247, 255, 0.1) 50%,
+                transparent 100%
+            );
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+            opacity: 0;
+        }
+        
+        .holographic-card:hover::before {
+            opacity: 1;
+            animation: shine 1.5s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: rotate(45deg) translateX(-50%); }
+            100% { transform: rotate(45deg) translateX(50%); }
+        }
+        
+        /* System UI Elements */
+        .system-border {
+            position: relative;
+            border-left: 2px solid var(--neon-blue);
+            padding-left: 1rem;
+        }
+        
+        .system-border::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -2px;
+            height: 100%;
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, var(--neon-blue), transparent);
+            animation: borderPulse 3s infinite;
+        }
+        
+        @keyframes borderPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        /* Progress Bars */
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            border-radius: 4px;
+            position: relative;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0.8) 0%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            animation: progressShine 2s infinite;
+        }
+        
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        /* Terminal Text */
+        .terminal-text {
+            font-family: 'Courier New', monospace;
+            color: var(--neon-teal);
+            text-shadow: 0 0 3px var(--neon-teal);
+        }
+        
+        /* System Notifications */
+        .notification {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(15, 15, 25, 0.9);
+            border: 1px solid var(--system-red);
+            border-radius: 4px;
+            padding: 1rem;
+            box-shadow: 0 0 20px rgba(255, 42, 109, 0.3);
+            transform: translateX(120%);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 1000;
+            max-width: 300px;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent 0%, rgba(255, 42, 109, 0.1) 100%);
+            pointer-events: none;
+        }
+        
+        /* Floating Elements */
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        /* HUD Elements */
+        .hud-corner {
+            position: fixed;
+            width: 200px;
+            height: 200px;
+            pointer-events: none;
+            z-index: 900;
+        }
+        
+        .hud-top-left {
+            top: 0;
+            left: 0;
+            border-top: 2px solid var(--neon-blue);
+            border-left: 2px solid var(--neon-blue);
+        }
+        
+        .hud-top-right {
+            top: 0;
+            right: 0;
+            border-top: 2px solid var(--neon-blue);
+            border-right: 2px solid var(--neon-blue);
+        }
+        
+        .hud-bottom-left {
+            bottom: 0;
+            left: 0;
+            border-bottom: 2px solid var(--neon-blue);
+            border-left: 2px solid var(--neon-blue);
+        }
+        
+        .hud-bottom-right {
+            bottom: 0;
+            right: 0;
+            border-bottom: 2px solid var(--neon-blue);
+            border-right: 2px solid var(--neon-blue);
+        }
+        
+        /* Typewriter Effect */
+        .typewriter {
+            overflow: hidden;
+            border-right: 2px solid var(--neon-teal);
+            white-space: nowrap;
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--neon-teal) }
+        }
+        
+        /* Interactive Glow */
+        .glow-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .glow-hover:hover {
+            text-shadow: 0 0 8px var(--neon-blue), 0 0 16px var(--neon-blue);
+            transform: scale(1.05);
+        }
+        
+        /* System Prompt */
+        .system-prompt {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(15, 15, 25, 0.95);
+            border: 2px solid var(--system-red);
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 0 30px rgba(255, 42, 109, 0.5);
+            z-index: 1001;
+            max-width: 80%;
+            text-align: center;
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        
+        .system-prompt.active {
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        .system-prompt h3 {
+            color: var(--system-red);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        /* Cyberpunk Button */
+        .cyber-button {
+            background: transparent;
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 0.5rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .cyber-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 247, 255, 0.2), transparent);
+            transition: all 0.5s ease;
+        }
+        
+        .cyber-button:hover {
+            box-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue);
+            text-shadow: 0 0 5px var(--neon-blue);
+        }
+        
+        .cyber-button:hover::before {
+            left: 100%;
+        }
+        
+        /* Audio Visualizer */
+        .audio-visualizer {
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.3rem;
+            align-items: flex-end;
+            height: 30px;
+            z-index: 900;
+        }
+        
+        .audio-bar {
+            width: 4px;
+            background: var(--neon-blue);
+            border-radius: 2px;
+            transition: height 0.1s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="scanlines"></div>
+    <div class="grid-pattern"></div>
+    <div class="particles" id="particles"></div>
+    
+    <!-- HUD Corners -->
+    <div class="hud-corner hud-top-left"></div>
+    <div class="hud-corner hud-top-right"></div>
+    <div class="hud-corner hud-bottom-left"></div>
+    <div class="hud-corner hud-bottom-right"></div>
+    
+    <!-- Audio Visualizer (Hidden by default) -->
+    <div class="audio-visualizer hidden" id="audioVisualizer">
+        <div class="audio-bar" style="height: 5px;"></div>
+        <div class="audio-bar" style="height: 10px;"></div>
+        <div class="audio-bar" style="height: 15px;"></div>
+        <div class="audio-bar" style="height: 20px;"></div>
+        <div class="audio-bar" style="height: 25px;"></div>
+        <div class="audio-bar" style="height: 30px;"></div>
+        <div class="audio-bar" style="height: 25px;"></div>
+        <div class="audio-bar" style="height: 20px;"></div>
+        <div class="audio-bar" style="height: 15px;"></div>
+        <div class="audio-bar" style="height: 10px;"></div>
+        <div class="audio-bar" style="height: 5px;"></div>
+    </div>
+    
+    <!-- System Notification -->
+    <div class="notification" id="systemNotification">
+        <div class="flex items-start">
+            <div class="bg-red-900/30 rounded-full p-2 mr-3 flex-shrink-0">
+                <i class="fas fa-exclamation-triangle text-red-400"></i>
+            </div>
+            <div>
+                <h4 class="font-bold text-red-400 mb-1">SYSTEM ALERT</h4>
+                <p class="text-sm" id="notificationMessage">Initializing developer interface...</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- System Prompt -->
+    <div class="system-prompt" id="systemPrompt">
+        <h3 id="promptTitle">SYSTEM NOTIFICATION</h3>
+        <p class="mb-4" id="promptMessage">Interface initialized successfully.</p>
+        <button class="cyber-button" id="promptConfirm">ACKNOWLEDGE</button>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="container mx-auto px-4 py-8 max-w-6xl relative">
+        <!-- Header Section -->
+        <header class="flex flex-col md:flex-row justify-between items-center mb-12">
+            <div class="flex items-center mb-6 md:mb-0">
+                <div class="h-16 w-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mr-4 floating">
+                    <span class="text-2xl font-bold">ST</span>
+                </div>
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-bold text-white neon-text">SAKSHAM TYAGI</h1>
+                    <p class="text-lg text-cyan-300 terminal-text typewriter">>>> PYTHON DEVELOPER</p>
+                </div>
+            </div>
+            
+            <div class="flex space-x-4">
+                <a href="mailto:sakshamtyagi001@gmail.com" class="holographic-card px-4 py-2 flex items-center hover:bg-cyan-900/20 cyber-button">
+                    <i class="fas fa-envelope text-cyan-300 mr-2"></i>
+                    <span>Email</span>
+                </a>
+                <a href="tel:+919161470742" class="holographic-card px-4 py-2 flex items-center hover:bg-purple-900/20 cyber-button">
+                    <i class="fas fa-phone text-purple-300 mr-2"></i>
+                    <span>Phone</span>
+                </a>
+                <a href="#" class="holographic-card px-4 py-2 flex items-center hover:bg-blue-900/20 cyber-button">
+                    <i class="fab fa-linkedin text-blue-300 mr-2"></i>
+                    <span>LinkedIn</span>
+                </a>
+            </div>
+        </header>
+        
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Professional Summary -->
+            <div class="lg:col-span-2 holographic-card p-6 system-border">
+                <div class="flex items-center mb-4 pb-4 border-b border-cyan-900/30">
+                    <i class="fas fa-terminal text-cyan-300 mr-2"></i>
+                    <h2 class="text-xl font-bold text-white glow-hover">PROFESSIONAL SUMMARY</h2>
+                </div>
+                <p class="text-gray-300 mb-4">
+                    Impact-driven Software Engineer with 5+ years of experience building scalable Python applications, cloud-native solutions, microservices architectures, and Gen-AI solutions.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex items-center">
+                        <div class="bg-cyan-900/30 rounded-full p-2 mr-3">
+                            <i class="fas fa-chart-line text-cyan-300"></i>
+                        </div>
+                        <span>20%+ performance improvement</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="bg-purple-900/30 rounded-full p-2 mr-3">
+                            <i class="fas fa-robot text-purple-300"></i>
+                        </div>
+                        <span>80% workload reduction</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="bg-blue-900/30 rounded-full p-2 mr-3">
+                            <i class="fas fa-project-diagram text-blue-300"></i>
+                        </div>
+                        <span>End-to-end development lifecycle</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="bg-teal-900/30 rounded-full p-2 mr-3">
+                            <i class="fas fa-users text-teal-300"></i>
+                        </div>
+                        <span>Team mentoring & leadership</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Core Skills -->
+            <div class="holographic-card p-6 system-border">
+                <div class="flex items-center mb-4 pb-4 border-b border-purple-900/30">
+                    <i class="fas fa-laptop-code text-purple-300 mr-2"></i>
+                    <h2 class="text-xl font-bold text-white glow-hover">CORE SKILLS</h2>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm">Python 3</span>
+                            <span class="text-sm text-cyan-300">Advanced</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 95%"></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm">Flask</span>
+                            <span class="text-sm text-cyan-300">Advanced</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm">Azure</span>
+                            <span class="text-sm text-cyan-300">Advanced</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm">AI/ML</span>
+                            <span class="text-sm text-cyan-300">Intermediate</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm">Java</span>
+                            <span class="text-sm text-cyan-300">Basic</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 50%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Experience Section -->
+        <div class="holographic-card p-6 mb-8 system-border">
+            <div class="flex items-center mb-6 pb-4 border-b border-blue-900/30">
+                <i class="fas fa-briefcase text-blue-300 mr-2"></i>
+                <h2 class="text-xl font-bold text-white glow-hover">PROFESSIONAL EXPERIENCE</h2>
+            </div>
+            
+            <div class="space-y-8">
+                <!-- KPMG Experience -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="md:col-span-1">
+                        <h3 class="text-lg font-bold text-cyan-300">Python Developer</h3>
+                        <p class="text-sm text-gray-400">KPMG India</p>
+                        <p class="text-xs text-gray-500">Sep 2022 - Present</p>
+                        <button class="cyber-button mt-2 text-xs" onclick="showPrompt('MISSION DETAILS', 'KPMG India: Senior Python Developer specializing in AI integration and cloud solutions.')">
+                            <i class="fas fa-info-circle mr-1"></i> Details
+                        </button>
+                    </div>
+                    <div class="md:col-span-3">
+                        <ul class="space-y-3">
+                            <li class="flex">
+                                <div class="bg-cyan-900/30 rounded-full h-5 w-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">
+                                    <i class="fas fa-check text-cyan-300 text-xs"></i>
+                                </div>
+                                <span>Streamlined processing for 1,000+ monthly invoices with scalable Flask microservices</span>
+                            </li>
+                            <li class="flex">
+                                <div class="bg-cyan-900/30 rounded-full h-5 w-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">
+                                    <i class="fas fa-check text-cyan-300 text-xs"></i>
+                                </div>
+                                <span>Reduced manual review time by 20% with Azure OpenAI GPT-4o-mini integration</span>
+                            </li>
+                            <li class="flex">
+                                <div class="bg-cyan-900/30 rounded-full h-5 w-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">
+                                    <i class="fas fa-check text-cyan-300 text-xs"></i>
+                                </div>
+                                <span>Boosted API response speed by 30% with Redis caching layer</span>
+                            </li>
+                            <li class="flex">
+                                <div class="bg-cyan-900/30 rounded-full h-5 w-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">
+                                    <i class="fas fa-check text-cyan-300 text-xs"></i>
+                                </div>
+                                <span>Achieved 95% invoice data extraction accuracy with Azure OpenAI proof-of-concept</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- TCS Experience -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="md:col-span-1">
+                        <h3 class="text-lg font-bold text-cyan-300">Python Developer</h3>
+                        <p class="text-sm text-gray-400">Tata Consultancy Services</p>
+                        <p class="text-xs text-gray-500">Jun 2019 - Sep 2022</p>
+                        <button class="cyber-button mt-2 text-xs" onclick="showPrompt('MISSION DETAILS', 'TCS: Python Developer focused on process automation and data solutions.')">
+                            <i class="fas fa-info-circle mr-1"></i> Details
+                        </button>
+                    </div>
+                    <div class="md:col-span-3">
+                        <ul class="space-y-3">
+                            <li class="flex">
+                                <div class="bg-purple-900/30 rounded-full h-5 w-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">
+                                    <i class="fas fa-check text-purple-300 text-xs"></i>
+                                </div>
+                                <span>Optimized Python code to process 1M+ records, reducing time by 30%</span>
+                            </li>
+                            <li class="flex">
+                                <div class="bg-purple-900/30 rounded-full h-5 w-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">
+                                    <i class="fas fa-check text-purple-300 text-xs"></i>
+                                </div>
+                                <span>Saved 10 hours weekly by automating processes with Python scripts</span>
+                            </li>
+                            <li class="flex">
+                                <div class="bg-purple-900/30 rounded-full h-5 w-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">
+                                    <i class="fas fa-check text-purple-300 text-xs"></i>
+                                </div>
+                                <span>Improved ML model accuracy by 10% with robust post-processing module</span>
+                            </li>
+                            <li class="flex">
+                                <div class="bg-purple-900/30 rounded-full h-5 w-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">
+                                    <i class="fas fa-check text-purple-300 text-xs"></i>
+                                </div>
+                                <span>Reduced onboarding time by 50% through comprehensive documentation</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Education & Certifications -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Education -->
+            <div class="holographic-card p-6 system-border">
+                <div class="flex items-center mb-4 pb-4 border-b border-teal-900/30">
+                    <i class="fas fa-graduation-cap text-teal-300 mr-2"></i>
+                    <h2 class="text-xl font-bold text-white glow-hover">EDUCATION</h2>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="font-bold text-cyan-300">M.C.A. (Master of Computer Applications)</h3>
+                        <p class="text-sm text-gray-400">Chandigarh University IDOL</p>
+                        <p class="text-xs text-gray-500">2021-2023 | CGPA: 8.20</p>
+                        <button class="cyber-button mt-1 text-xs" onclick="showNotification('SYSTEM: Education verified', 'Master of Computer Applications completed with honors.')">
+                            <i class="fas fa-certificate mr-1"></i> Verify
+                        </button>
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-bold text-cyan-300">B.C.A. (Bachelor of Computer Applications)</h3>
+                        <p class="text-sm text-gray-400">Integral University, Lucknow</p>
+                        <p class="text-xs text-gray-500">2015-2018 | Percentage: 69.98</p>
+                        <button class="cyber-button mt-1 text-xs" onclick="showNotification('SYSTEM: Education verified', 'Bachelor of Computer Applications completed.')">
+                            <i class="fas fa-certificate mr-1"></i> Verify
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Certifications -->
+            <div class="holographic-card p-6 system-border">
+                <div class="flex items-center mb-4 pb-4 border-b border-purple-900/30">
+                    <i class="fas fa-certificate text-purple-300 mr-2"></i>
+                    <h2 class="text-xl font-bold text-white glow-hover">CERTIFICATIONS</h2>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex items-start">
+                        <div class="bg-blue-900/30 rounded-full p-2 mr-3 flex-shrink-0">
+                            <i class="fab fa-microsoft text-blue-300"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium">Microsoft Certified Azure Fundamentals (AZ-900)</p>
+                            <p class="text-sm text-gray-400">Azure Developer Associate (AZ-204)</p>
+                            <button class="cyber-button mt-1 text-xs" onclick="showPrompt('SKILL UNLOCKED', 'Azure Cloud Certification achieved. Cloud computing capabilities enhanced.')">
+                                <i class="fas fa-lock-open mr-1"></i> Unlock Details
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="bg-yellow-900/30 rounded-full p-2 mr-3 flex-shrink-0">
+                            <i class="fas fa-trophy text-yellow-300"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium">Awards & Recognitions</p>
+                            <p class="text-sm text-gray-400">On-the-spot Award, Best Team Award</p>
+                            <button class="cyber-button mt-1 text-xs" onclick="showPrompt('ACHIEVEMENT UNLOCKED', 'Corporate recognition for exceptional performance and teamwork.')">
+                                <i class="fas fa-trophy mr-1"></i> View
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="bg-green-900/30 rounded-full p-2 mr-3 flex-shrink-0">
+                            <i class="fab fa-python text-green-300"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium">Python Programming</p>
+                            <p class="text-sm text-gray-400">Wesleyan University, Coursera</p>
+                            <button class="cyber-button mt-1 text-xs" onclick="showPrompt('SKILL MASTERED', 'Advanced Python programming certification completed.')">
+                                <i class="fas fa-code mr-1"></i> Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Skill Level Up Button -->
+        <div class="text-center mb-8">
+            <button class="cyber-button px-8 py-3 text-lg" onclick="levelUp()">
+                <i class="fas fa-level-up-alt mr-2"></i> LEVEL UP SKILLS
+            </button>
+        </div>
+        
+        <!-- Floating Icons -->
+        <div class="fixed bottom-8 right-8 flex flex-col space-y-4">
+            <div class="bg-cyan-900/30 rounded-full p-3 text-cyan-300 floating pulse cursor-pointer" onclick="playSystemSound('hover')">
+                <i class="fab fa-python text-xl"></i>
+            </div>
+            <div class="bg-blue-900/30 rounded-full p-3 text-blue-300 floating pulse" style="animation-delay: 0.5s;" onclick="playSystemSound('click')">
+                <i class="fab fa-microsoft text-xl"></i>
+            </div>
+            <div class="bg-purple-900/30 rounded-full p-3 text-purple-300 floating pulse" style="animation-delay: 1s;" onclick="playSystemSound('notification')">
+                <i class="fas fa-robot text-xl"></i>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Audio Elements (Hidden) -->
+    <audio id="hoverSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3" preload="auto"></audio>
+    <audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3" preload="auto"></audio>
+    <audio id="notificationSound" src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3" preload="auto"></audio>
+    <audio id="levelUpSound" src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3" preload="auto"></audio>
+    
+    <script>
+        // Initialize particles
+        function initParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = window.innerWidth < 768 ? 30 : 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random size between 1px and 3px
+                const size = Math.random() * 2 + 1;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Random position
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                // Random animation duration and delay
+                const duration = Math.random() * 20 + 10;
+                const delay = Math.random() * 5;
+                particle.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
+                
+                // Random opacity
+                particle.style.opacity = Math.random() * 0.5 + 0.1;
+                
+                container.appendChild(particle);
+            }
+        }
+        
+        // Show system notification
+        function showNotification(title, message) {
+            const notification = document.getElementById('systemNotification');
+            const notificationTitle = notification.querySelector('h4');
+            const notificationMessage = document.getElementById('notificationMessage');
+            
+            notificationTitle.textContent = title;
+            notificationMessage.textContent = message;
+            
+            notification.classList.add('show');
+            playSystemSound('notification');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+        
+        // Show system prompt
+        function showPrompt(title, message) {
+            const prompt = document.getElementById('systemPrompt');
+            const promptTitle = document.getElementById('promptTitle');
+            const promptMessage = document.getElementById('promptMessage');
+            
+            promptTitle.textContent = title;
+            promptMessage.textContent = message;
+            
+            prompt.classList.add('active');
+            playSystemSound('notification');
+            
+            // Close prompt when confirm button is clicked
+            document.getElementById('promptConfirm').onclick = function() {
+                prompt.classList.remove('active');
+                playSystemSound('click');
+            };
+        }
+        
+        // Play system sounds
+        function playSystemSound(type) {
+            let sound;
+            
+            switch(type) {
+                case 'hover':
+                    sound = document.getElementById('hoverSound');
+                    break;
+                case 'click':
+                    sound = document.getElementById('clickSound');
+                    break;
+                case 'notification':
+                    sound = document.getElementById('notificationSound');
+                    break;
+                case 'levelUp':
+                    sound = document.getElementById('levelUpSound');
+                    break;
+                default:
+                    sound = document.getElementById('clickSound');
+            }
+            
+            sound.currentTime = 0;
+            sound.play();
+            
+            // Show audio visualizer for a moment
+            if (type === 'click' || type === 'notification' || type === 'levelUp') {
+                const visualizer = document.getElementById('audioVisualizer');
+                visualizer.classList.remove('hidden');
+                
+                // Animate bars
+                const bars = visualizer.querySelectorAll('.audio-bar');
+                bars.forEach(bar => {
+                    const randomHeight = Math.floor(Math.random() * 30) + 5;
+                    bar.style.height = `${randomHeight}px`;
+                });
+                
+                setTimeout(() => {
+                    visualizer.classList.add('hidden');
+                }, 1000);
+            }
+        }
+        
+        // Level up animation
+        function levelUp() {
+            playSystemSound('levelUp');
+            showPrompt('LEVEL UP!', 'Developer skills upgraded! All attributes increased.');
+            
+            // Animate progress bars
+            const progressBars = document.querySelectorAll('.progress-fill');
+            progressBars.forEach(bar => {
+                const currentWidth = parseInt(bar.style.width);
+                const newWidth = Math.min(currentWidth + 5, 100);
+                bar.style.width = `${newWidth}%`;
+                
+                // Add sparkle effect
+                const sparkle = document.createElement('div');
+                sparkle.style.position = 'absolute';
+                sparkle.style.width = '100%';
+                sparkle.style.height = '100%';
+                sparkle.style.background = 'radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%)';
+                sparkle.style.opacity = '0';
+                sparkle.style.animation = 'sparkle 1s ease-out';
+                
+                bar.appendChild(sparkle);
+                
+                setTimeout(() => {
+                    sparkle.remove();
+                }, 1000);
+            });
+        }
+        
+        // Add sparkle animation to style
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes sparkle {
+                0% { transform: scale(0); opacity: 0; }
+                50% { transform: scale(1.5); opacity: 0.8; }
+                100% { transform: scale(2); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            initParticles();
+            
+            // Initial system notification
+            setTimeout(() => {
+                showNotification('SYSTEM INITIALIZED', 'Developer interface online. All systems nominal.');
+            }, 1000);
+            
+            // Add hover effects to all interactive elements
+            const interactiveElements = document.querySelectorAll('button, a, .holographic-card, .cyber-button');
+            interactiveElements.forEach(el => {
+                el.addEventListener('mouseenter', () => playSystemSound('hover'));
+            });
+        });
+    </script>
+</body>
+</html>
